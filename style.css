@@ -16,9 +16,14 @@
 	box-sizing: border-box;
 }
 
+html {
+	height: 100%;
+}
+
 body {
 	background-color: #6441a5;
 	margin: 0px;
+	height: 100%;
 }
 
 #frames {
@@ -69,10 +74,20 @@ body {
 	margin: 10px;
 }
 
+#layout {
+	display: flex;
+	height: 100%;
+	align-items: center;
+	justify-content: center;
+	font-size: 0;
+}
+#canvas-wrapper {
+	flex-basis: calc(100% - 200px);
+}
+
 #canvas {
 	display: inline-block;
-	width: calc(100% - 200px);
-	margin: 0 100px;
+	width: 100%;
 	border: 2px solid #ffffff;
 
 	cursor: crosshair;
@@ -89,11 +104,12 @@ body {
 	padding: 0px;
 	color: white;
 	width: 100px;
+	flex-basis: 100px;
 	font-size: 0;
-	position: absolute;
-	left: 0;
+	/* position: absolute;
+	left: 0; */
 	top: 50%;
-	transform: translateY(-50%);
+	/* transform: translateY(-50%); */
 }
 
 #toolbar .item {
@@ -115,16 +131,22 @@ body {
 	padding: 0px;
 	color: white;
 	width: 100px;
-	position: absolute;
-	right: 0;
+	flex-basis: 100px;
+	/* position: absolute;
+	right: 0; */
 	top: 50%;
-	transform: translateY(-50%);
+	/* transform: translateY(-50%); */
 }
 
 #palette .item {
-	flex: 50%;
-	padding: 25px;
+	/* flex: 50%;
+	padding: 25px; */
 	cursor: pointer;
+	width: 50px;
+	height: 50px;
+}
+#palette .item.act {
+	border: 2px solid black;
 }
 
 path {
@@ -142,12 +164,15 @@ path {
 	box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
 	background-color: #332f35;
 	color: white;
-	padding: 5px 15px 5px 15px;
+	padding: 15px;
 	border-radius: 5px;
 	font-size: 25px;
 	font-weight: bolder;
 	cursor: pointer;
 	z-index: 3;
+}
+.menubtn i {
+	display: block;
 }
 
 .menu {
@@ -166,6 +191,9 @@ path {
 	list-style: none;
 	background-color: #332f35;
 	cursor: pointer;
+}
+.menu li:hover {
+	background: grey;
 }
 
 .menu li i {
@@ -208,4 +236,38 @@ path {
 	.menu {
 		top: 110px;
 	}
+}
+
+.tooltip {
+	position: relative;
+	display: inline-block;
+	border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+	visibility: hidden;
+	width: 120px;
+	background-color: black;
+	color: #fff;
+	text-align: center;
+	border-radius: 6px;
+	padding: 5px 0;
+	position: absolute;
+	z-index: 1;
+	left: 100%;
+	font-size: 15px;
+}
+
+.tooltip .tooltiptext::after {
+	content: "";
+	position: absolute;
+	top: 50%;
+	right: 100%;
+	margin-top: -5px;
+	border-width: 5px;
+	border-style: solid;
+	border-color: transparent black transparent transparent;
+}
+.tooltip:hover .tooltiptext {
+	visibility: visible;
 }

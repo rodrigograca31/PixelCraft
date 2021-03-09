@@ -237,7 +237,7 @@ class Canvas {
 		/*let a = this.frames.map(frame=> [frame[0].src,frame[1]]);
     let f =  JSON.stringify(a);*/
 		let d = {
-			colors: window.colors,
+			// colors: window.colors,
 			currColor: this.color,
 			width: this.width,
 			height: this.height,
@@ -323,7 +323,7 @@ window.onload = function () {
 	if (canvasData) {
 		data = JSON.parse(canvasData);
 		console.log(data);
-		window.colors = data.colors;
+		// window.colors = data.colors;
 		window.board = new Canvas(data.width, data.height);
 		let img = new Image();
 		img.setAttribute("src", data.url);
@@ -350,61 +350,9 @@ window.onload = function () {
 		window.board.steps = data.steps;
 		window.board.redo_arr = data.redo_arr;
 		window.board.setcolor(data.currColor);
-		window.gif = new GIF({
-			workers: 2,
-			quality: 10,
-			width: 10 * window.board.width,
-			height: 10 * window.board.height,
-		});
-		window.gif.on("finished", function (blob) {
-			var url = URL.createObjectURL(blob);
-			var link = document.createElement("a");
-			link.download = "canvas.gif";
-			link.href = url;
-			link.click();
-		});
 	} else {
 		newProject();
 	}
-	document.querySelector("#palette").innerHTML = colors
-		.map(
-			(x) =>
-				`<span class="item" style="background-color: rgb(${x[0]},${x[1]},${x[2]})" onclick="board.setcolor([${x}]);act(this);" oncontextmenu="board.setcolor([${x}]);act(this);board.ctx.globalAlpha=+prompt('Transparency(0-1)?')"></span>`
-		)
-		.join("\n");
-
-	document
-		.querySelector("#palette")
-		.addEventListener("contextmenu", (e) => e.preventDefault());
-};
-
-const width = 64;
-const height = 32;
-window.board = new Canvas(width, height);
-window.board.setcolor([0, 0, 0, 255]);
-
-window.gif = new GIF({
-	workers: 2,
-	quality: 10,
-	width: 10 * window.board.width,
-	height: 10 * window.board.height,
-});
-window.gif.on("finished", function (blob) {
-	var url = URL.createObjectURL(blob);
-	var link = document.createElement("a");
-	link.download = "canvas.gif";
-	link.href = url;
-	link.click();
-});
-
-document.querySelector(".menubtn").onclick = function () {
-	document.querySelector(".menu").style.display =
-		document.querySelector(".menu").style.display != "block" ? "block" : "none";
-};
-
-function newProject() {
-	document.querySelector(".menu").style.display = "none";
-	localStorage.removeItem("pc-canvas-data");
 
 	window.colors = [
 		[0, 0, 0, 255],
@@ -428,6 +376,45 @@ function newProject() {
 		[112, 146, 190, 255],
 		[200, 191, 231, 255],
 	];
+
+	window.gif = new GIF({
+		workers: 2,
+		quality: 10,
+		width: 10 * window.board.width,
+		height: 10 * window.board.height,
+	});
+
+	window.gif.on("finished", function (blob) {
+		var url = URL.createObjectURL(blob);
+		var link = document.createElement("a");
+		link.download = "canvas.gif";
+		link.href = url;
+		link.click();
+	});
+
+	document.querySelector("#palette").innerHTML = colors
+		.map(
+			(x) =>
+				`<span class="item" style="background-color: rgb(${x[0]},${x[1]},${x[2]})" onclick="board.setcolor([${x}]);act(this);" oncontextmenu="board.setcolor([${x}]);act(this);board.ctx.globalAlpha=+prompt('Transparency(0-1)?')"></span>`
+		)
+		.join("\n");
+
+	document
+		.querySelector("#palette")
+		.addEventListener("contextmenu", (e) => e.preventDefault());
+};
+
+document.querySelector(".menubtn").onclick = function () {
+	document.querySelector(".menu").style.display =
+		document.querySelector(".menu").style.display != "block" ? "block" : "none";
+};
+
+function newProject() {
+	document.querySelector(".menu").style.display = "none";
+	localStorage.removeItem("pc-canvas-data");
+
+	window.board = new Canvas(64, 32);
+	window.board.setcolor([0, 0, 0, 255]);
 }
 function filler(x, y, cc) {
 	if (x >= 0 && x < board.width && y >= 0 && y < board.height) {
@@ -447,8 +434,9 @@ function filler(x, y, cc) {
 function act(clr) {
 	document
 		.querySelectorAll("#palette .item")
-		.forEach((x) => (x.style.boxShadow = ""));
-	clr.style.boxShadow = "10px 10px 10px 10px rgba(0,0,0,0.5)";
+		.forEach((x) => x.classList.remove("act"));
+
+	clr.classList.add("act");
 }
 
 window.onbeforeunload = function () {
@@ -456,32 +444,44 @@ window.onbeforeunload = function () {
 	return "Data will be lost if you leave the page, are you sure?";
 };
 
-var scope = {
-	scope: "./",
-};
-if ("serviceWorker" in navigator) {
-	navigator.serviceWorker
-		.register("sw.js", scope)
-		.then(function (serviceWorker) {
-			console.log("successful");
-		})
-		.catch(function (error) {
-			alert("error");
-		});
-} else {
-	console.log("unavailable");
+function KeyPress(e) {
+	var evtobj = window.event ? event : e;
+	if (evtobj.keyCode == 90 && evtobj.ctrlKey) {
+		window.board.undo();
+	}
+	if (evtobj.keyCode == 89 && evtobj.ctrlKey) {
+		window.board.redo();
+	}
 }
 
-var msg;
-window.addEventListener("beforeinstallprompt", (e) => {
-	e.preventDefault();
-	msg = e;
-});
+document.onkeydown = KeyPress;
 
-function install() {
-	msg.prompt();
-}
+// var scope = {
+// 	scope: "./",
+// };
+// if ("serviceWorker" in navigator) {
+// 	navigator.serviceWorker
+// 		.register("sw.js", scope)
+// 		.then(function (serviceWorker) {
+// 			console.log("successful");
+// 		})
+// 		.catch(function (error) {
+// 			alert("error");
+// 		});
+// } else {
+// 	console.log("unavailable");
+// }
 
-window.onerror = function (errorMsg, url, lineNumber) {
-	alert("Error: " + errorMsg + " Script: " + url + " Line: " + lineNumber);
-};
+// var msg;
+// window.addEventListener("beforeinstallprompt", (e) => {
+// 	e.preventDefault();
+// 	msg = e;
+// });
+
+// function install() {
+// 	msg.prompt();
+// }
+
+// window.onerror = function (errorMsg, url, lineNumber) {
+// 	alert("Error: " + errorMsg + " Script: " + url + " Line: " + lineNumber);
+// };
