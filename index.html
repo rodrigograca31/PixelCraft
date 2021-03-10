@@ -41,8 +41,8 @@
 		<div class="menubtn"><i class="fas fa-bars"></i></div>
 		<ul class="menu">
 			<!-- <li onclick="newProject()">New</li> -->
-			<li onclick="board.save()">Save image</li>
-			<li onclick="board.renderGIF()">Save GIF</li>
+			<!-- <li onclick="board.save()">Save image</li> -->
+			<!-- <li onclick="board.renderGIF()">Save GIF</li> -->
 			<!-- <li onclick="install()">Install PWA</li> -->
 		</ul>
 		<div id="frames" onblur="Frames.close()" tabindex="0">
@@ -103,11 +103,11 @@
 				</span>
 				<span class="item tooltip" onclick="board.addImage()">
 					<i class="fa fa-upload"></i>
-					<span class="tooltiptext">Picture</span>
+					<span class="tooltiptext">Load Picture</span>
 				</span>
 				<span class="item tooltip" onclick="board.save()">
 					<i class="fa fa-download"></i>
-					<span class="tooltiptext">Save</span>
+					<span class="tooltiptext">Save Picture</span>
 				</span>
 				<span class="item tooltip" onclick="board.clear()">
 					<i class="fas fa-trash"></i>
@@ -120,6 +120,10 @@
 				<span class="item tooltip" onclick="Frames.open()">
 					<i class="fas fa-eye"></i>
 					<span class="tooltiptext">Frames</span>
+				</span>
+				<span class="item tooltip" onclick="board.renderGIF()">
+					<i class="fas fa-eye"></i>
+					<span class="tooltiptext">Save GIF</span>
 				</span> -->
 			</div>
 			<div id="canvas-wrapper">
